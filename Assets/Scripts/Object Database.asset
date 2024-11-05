@@ -1,0 +1,51 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d50e4a0a3451084ea6a05bb1c163a2a, type: 3}
+  m_Name: Object Database
+  m_EditorClassIdentifier: 
+  objectsData:
+  - <Name>k__BackingField: Trees
+    <ID>k__BackingField: 0
+    <Prefab>k__BackingField: {fileID: 2668382240757142961, guid: e9eb20be4684d3c44a4a85bcd92d118c, type: 3}
+    <Price>k__BackingField: 10
+    <PollutionMultiplier>k__BackingField: 0.5
+    <TimeToBuildInSec>k__BackingField: 30
+  - <Name>k__BackingField: House
+    <ID>k__BackingField: 1
+    <Prefab>k__BackingField: {fileID: 5706526745131838656, guid: 9538c051d22ee2d4f81de60ff39a3510, type: 3}
+    <Price>k__BackingField: 200
+    <PollutionMultiplier>k__BackingField: -1
+    <TimeToBuildInSec>k__BackingField: 60
+  - <Name>k__BackingField: Electrostation
+    <ID>k__BackingField: 2
+    <Prefab>k__BackingField: {fileID: 2491529405496977613, guid: 0dfd820a631832643a8422dbe29d7dbe, type: 3}
+    <Price>k__BackingField: 200
+    <PollutionMultiplier>k__BackingField: -3
+    <TimeToBuildInSec>k__BackingField: 60
+  - <Name>k__BackingField: Street Road
+    <ID>k__BackingField: 3
+    <Prefab>k__BackingField: {fileID: 5074049206092956195, guid: 7f7f0a44166acda48bf0115f2255c64b, type: 3}
+    <Price>k__BackingField: 200
+    <PollutionMultiplier>k__BackingField: -3
+    <TimeToBuildInSec>k__BackingField: 60
+  - <Name>k__BackingField: Cross Road
+    <ID>k__BackingField: 4
+    <Prefab>k__BackingField: {fileID: 4089753280810521488, guid: 3a3114d0d897b604e9ff5fdaa8442fb6, type: 3}
+    <Price>k__BackingField: 200
+    <PollutionMultiplier>k__BackingField: -3
+    <TimeToBuildInSec>k__BackingField: 60
+  - <Name>k__BackingField: Turn Road
+    <ID>k__BackingField: 5
+    <Prefab>k__BackingField: {fileID: 7389227313582241461, guid: ca612e9bf46d10243b911e39e65d5892, type: 3}
+    <Price>k__BackingField: 200
+    <PollutionMultiplier>k__BackingField: -3
+    <TimeToBuildInSec>k__BackingField: 60
