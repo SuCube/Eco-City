@@ -276,7 +276,7 @@ GameObject:
   m_Component:
   - component: {fileID: 65870935}
   - component: {fileID: 65870937}
-  - component: {fileID: 65870936}
+  - component: {fileID: 65870938}
   m_Layer: 0
   m_Name: GridSystem
   m_TagString: Untagged
@@ -300,25 +300,6 @@ Transform:
   - {fileID: 1157134470}
   m_Father: {fileID: 1202191069}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &65870936
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 65870934}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd985e2668d6d994eb96b984388d888c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _grid: {fileID: 65870937}
-  _inputManager: {fileID: 316969070}
-  _cellIndicator: {fileID: 1157134469}
-  _cellMenu: {fileID: 1388563346}
-  _objectDatabase: {fileID: 11400000, guid: eddb818e65d50da4ba95f11f4811417f, type: 2}
-  _gridVisualization: {fileID: 1866810802}
-  _objectsParent: {fileID: 276021133}
 --- !u!156049354 &65870937
 Grid:
   m_ObjectHideFlags: 0
@@ -331,6 +312,25 @@ Grid:
   m_CellGap: {x: 0, y: 0, z: 0}
   m_CellLayout: 0
   m_CellSwizzle: 0
+--- !u!114 &65870938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 65870934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2730357003b22c643a627a0db1aacc11, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _grid: {fileID: 65870937}
+  _inputManager: {fileID: 316969070}
+  _cellIndicator: {fileID: 1157134469}
+  _cellMenu: {fileID: 1388563346}
+  _objectDatabase: {fileID: 11400000, guid: eddb818e65d50da4ba95f11f4811417f, type: 2}
+  _gridVisualization: {fileID: 1866810802}
+  _objectsParent: {fileID: 276021133}
 --- !u!1 &68618384
 GameObject:
   m_ObjectHideFlags: 0
@@ -884,11 +884,11 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 231254523}
+  m_TargetGraphic: {fileID: 1924920722}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 65870936}
+      - m_Target: {fileID: 65870938}
         m_TargetAssemblyTypeName: GridSystem, Assembly-CSharp
         m_MethodName: StartPlacement
         m_Mode: 3
@@ -4125,11 +4125,11 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 1158674251}
+  m_TargetGraphic: {fileID: 1924920722}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 65870936}
+      - m_Target: {fileID: 65870938}
         m_TargetAssemblyTypeName: GridSystem, Assembly-CSharp
         m_MethodName: StartPlacement
         m_Mode: 3
@@ -5761,11 +5761,11 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 1604514020}
+  m_TargetGraphic: {fileID: 1924920722}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 65870936}
+      - m_Target: {fileID: 65870938}
         m_TargetAssemblyTypeName: GridSystem, Assembly-CSharp
         m_MethodName: StartPlacement
         m_Mode: 3
@@ -6883,7 +6883,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 65870936}
+      - m_Target: {fileID: 65870938}
         m_TargetAssemblyTypeName: GridSystem, Assembly-CSharp
         m_MethodName: StartPlacement
         m_Mode: 3
@@ -7376,11 +7376,11 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 2122519340}
+  m_TargetGraphic: {fileID: 1924920722}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 65870936}
+      - m_Target: {fileID: 65870938}
         m_TargetAssemblyTypeName: GridSystem, Assembly-CSharp
         m_MethodName: StartPlacement
         m_Mode: 3
@@ -7592,11 +7592,11 @@ MonoBehaviour:
     m_SelectedTrigger: Selected
     m_DisabledTrigger: Disabled
   m_Interactable: 1
-  m_TargetGraphic: {fileID: 2135708972}
+  m_TargetGraphic: {fileID: 1924920722}
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 65870936}
+      - m_Target: {fileID: 65870938}
         m_TargetAssemblyTypeName: GridSystem, Assembly-CSharp
         m_MethodName: StartPlacement
         m_Mode: 3

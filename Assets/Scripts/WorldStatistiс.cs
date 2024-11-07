@@ -1,19 +1,20 @@
-using System.Collections;
-using System.Collections.Generic;
+//WorldStatistic.cs
+// –≈‘¿ “Œ– Œ¡ﬂ«¿“≈À‹ÕŒ
+
 using UnityEngine.UI;
 using UnityEngine;
 using System;
 using TMPro;
-using Unity.VisualScripting;
 
-public class WorldStatistic1 : MonoBehaviour
+public class WorldStatistic : MonoBehaviour
 {
     [Header("Pollution")]
     [SerializeField] private float startingEcoStatus = 30.0f;
     [SerializeField] private float maxEcoStatus = 100.0f;
-    [SerializeField] private static float currentPollutionMultiplier = 1.0f;
     [SerializeField] private float pollutionUnit = 1.0f;
     [SerializeField] private Slider ecoSlider;
+    private static float currentPollutionMultiplier = 1.0f;
+    
     [Header("Finance")]
     [SerializeField] private int startingMoney = 20000;
     [SerializeField] private int startingIncome = 100;
@@ -23,8 +24,8 @@ public class WorldStatistic1 : MonoBehaviour
     private static int currentMoney = 0;
 
     private bool? checkWin = null;
-    private float currentEcoStatus = 0.0f;
 
+    private float currentEcoStatus = 0.0f;
     private float timerForIncome = 0.0f;
 
     private void Start()
@@ -35,7 +36,7 @@ public class WorldStatistic1 : MonoBehaviour
 
     void FixedUpdate()
     {
-        WorldStatus();
+        //WorldStatus();
         timerForIncome += Time.deltaTime;
         
         // «‡„ˇÁÌÂÌËÂ

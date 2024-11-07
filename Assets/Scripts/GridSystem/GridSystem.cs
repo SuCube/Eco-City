@@ -1,7 +1,8 @@
-using System;
+//GridSystem.cs
+//Тут баг где-то в строительстве и в cellMenu, надо фиксить
+
 using TMPro;
 using UnityEngine;
-using static UnityEditor.PlayerSettings;
 
 public class GridSystem : MonoBehaviour
 {
@@ -19,40 +20,43 @@ public class GridSystem : MonoBehaviour
 
     private Vector3 _indicatorPosition;
     GridMatrix objectsMatrix;
+
     private class GridMatrix
     {
-        private int[,,] matrix;
-        private Vector3Int startingPoint;
+        private readonly Building[,,] matrix; 
+        private readonly Vector3Int startingPoint;
 
         public GridMatrix(Vector3Int size, Vector3Int startingPoint)
         {
-            matrix = new int[size.x, 1, size.z];
+            matrix = new Building[size.x, 1, size.z];
             this.startingPoint = startingPoint;
 
-            for (int i = 0; i < size.x; i++)
-                for (int j = 0; j < size.x; j++)
-                    matrix[i, 0, j] = -1;
+            InitializeMatrix(size);
         }
 
-        public int this[Vector3Int coords]
+        public Building this[Vector3Int coords]
         {
-            get
+            get => matrix[NormalizeIndex(coords).x, 0, NormalizeIndex(coords).z];
+            set => matrix[NormalizeIndex(coords).x, 0, NormalizeIndex(coords).z] = value;
+        }
+
+        private void InitializeMatrix(Vector3Int size)
+        {
+            for (int i = 0; i < size.x; i++)
             {
-                Vector3Int result = NormalizeIndex(coords);
-                return matrix[result.x, 0, result.z];
-            }
-            set
-            {
-                Vector3Int result = NormalizeIndex(coords);
-                matrix[result.x, 0, result.z] = value;
+                for (int j = 0; j < size.z; j++)
+                {
+                    matrix[i, 0, j] = null;
+                }
             }
         }
-        Vector3Int NormalizeIndex(Vector3Int coords)
+
+        private Vector3Int NormalizeIndex(Vector3Int coords)
         {
-            Vector3Int result = coords + startingPoint;
-            return result;
+            return coords + startingPoint;
         }
     }
+
     void Start()
     {
         StopPlacement();
@@ -61,19 +65,21 @@ public class GridSystem : MonoBehaviour
 
     public void StartPlacement(int ID)
     {
+
         //StopPlacement();
         _selectedObjectIndex = _objectDatabase.objectsData.FindIndex(data => data.ID == ID);
         if (_selectedObjectIndex < 0)
         {
-            Debug.LogError($"No ID found {ID}");
+            Debug.LogError($"Object with ID {ID} not found");
             return;
         }
         _gridVisualization.SetActive(true);
-        _cellIndicator.SetActive(true);
+
         _inputManager.OnClicked += PlaceStructure;
         _inputManager.OnExit += StopPlacement;
         _inputManager.OnClicked -= ShowCellMenu;
 
+        Debug.Log("Начало постройки объекта " + _objectDatabase.objectsData[_selectedObjectIndex].Name);
     }
 
     void Update()
@@ -87,6 +93,7 @@ public class GridSystem : MonoBehaviour
         else
             _cellIndicator.SetActive(false);
     }
+
     public void StopPlacement()
     {
         _selectedObjectIndex = -1;
@@ -107,10 +114,6 @@ public class GridSystem : MonoBehaviour
             * ...Чистить?
          */
 
-        /*
-         Для удаления надо будет переписать матрицу, чтобы она не только ID держала, но и ссылки на инстансы (структура?)
-         */
-
         /*Баг: дабл-клик по кнопке стройки вызывает ошибку при нажатии по траве до нажатия пкм*/
 
         if (_inputManager.IsPointerOverUI()) return;
@@ -129,14 +132,17 @@ public class GridSystem : MonoBehaviour
         //Debug.Log(cellCoords.ToString() + (objectsMatrix[cellCoords]));
 
         // Если поле пустое, показать меню постройки
-        if (objectsMatrix[cellCoords] == -1) 
+        TMP_Text cellobjText = _cellMenu.GetComponentInChildren<TMP_Text>();
+
+        if (objectsMatrix[cellCoords] == null)
         {
-            _cellMenu.GetComponentInChildren<TMP_Text>().text = "Empty";
+            cellobjText.text = "Empty";
         }
         //Поле не пустое, показать возможность разрушить объект
         else
         {
-            _cellMenu.GetComponentInChildren<TMP_Text>().text = _objectDatabase.objectsData[objectsMatrix[cellCoords]].Name;
+            cellobjText.text = _objectDatabase.objectsData[objectsMatrix[cellCoords].Id].Name;
+            Debug.Log(objectsMatrix[cellCoords].Id);
         }
     }
 
@@ -155,20 +161,34 @@ public class GridSystem : MonoBehaviour
         if (_inputManager.IsPointerOverUI()) return;
 
         Vector3Int cellCoords = _grid.WorldToCell(_indicatorPosition);
-        //Debug.Log(cellCoords.ToString() + (objectsMatrix[cellCoords]));
-        if (objectsMatrix[cellCoords] == -1)
+        //if (objectsMatrix[cellCoords] == -1)
+        if (_inputManager.GetSelectedMapPosition(out _indicatorPosition) && objectsMatrix[cellCoords] == null)
         {
             GameObject newObject = Instantiate(_objectDatabase.objectsData[_selectedObjectIndex].Prefab);
-            
+        
             newObject.transform.position = _grid.CellToWorld(cellCoords);
             newObject.transform.parent = _objectsParent;
 
-            objectsMatrix[cellCoords] = _selectedObjectIndex;
-            // НЕ УДАЛЯЙ !!!
-            WorldStatistic.ChangePollution(_objectDatabase.objectsData[_selectedObjectIndex].PollutionMultiplier);
-            //
-            Debug.Log("Объект поставлен");
+            // Get the Building component from the instantiated prefab
+            Building newBuilding = newObject.GetComponent<Building>();
+            if (newBuilding != null)
+            {
+                newBuilding.Id = _selectedObjectIndex; // Set the ID from the database
+                newBuilding.BuildingStatus = Building.Status.IsUnderConstruction; // Set initial status
+                objectsMatrix[cellCoords] = newBuilding; // Store the Building directly
+            }
+            else
+            {
+                Debug.LogError("The prefab does not have a Building component attached.");
+            }
+
+            objectsMatrix[cellCoords] = newBuilding;
+
+            // Update pollution or other game stats
+            WorldStatistic.ChangePollution(_objectDatabase.objectsData[_selectedObjectIndex].PollutionMultiplier); 
+        
             StopPlacement();
         }
     }
+
 }
