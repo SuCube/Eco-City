@@ -1,6 +1,6 @@
 //GridSystem.cs
 //“ут баг где-то в строительстве и в cellMenu, надо фиксить
-
+//
 using TMPro;
 using UnityEngine;
 
