@@ -1,41 +1,43 @@
 using UnityEngine;
-using UnityEngine.UI;
+using UnityEngine.EventSystems;
+using TMPro;
 
-public class ButtonManager : MonoBehaviour
+public class ButtonHoverDescription : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerClickHandler
 {
-    public GameObject descriptionPanel; // Панель с описанием
-    private bool isButtonPressed; // Последняя нажатая кнопка
+    public TextMeshProUGUI descriptionText; // Ссылка на объект TextMeshPro для описания
+    private bool isButtonClicked = false; // Флаг для отслеживания нажатия кнопки
 
     void Start()
     {
-        // Скрываем панель с описанием в начале
-        descriptionPanel.SetActive(false);
-        isButtonPressed = false;
+        // Скрываем текст описания при старте
+        descriptionText.gameObject.SetActive(false);
     }
 
-    public void OnButtonHover(Button button)
+    public void OnPointerEnter(PointerEventData eventData)
     {
-        // Проверяем, была ли нажата кнопка
-        if (!isButtonPressed)
+        // Показываем описание только если кнопка не была нажата
+        if (!isButtonClicked)
         {
-            // Показываем описание, если кнопка не была нажата
-            descriptionPanel.SetActive(true);
+            descriptionText.gameObject.SetActive(true);
         }
     }
 
-    public void OnButtonClick(Button button)
+    public void OnPointerExit(PointerEventData eventData)
     {
-        // Скрываем описание при нажатии на кнопку
-        descriptionPanel.SetActive(false);
-        isButtonPressed = true; // Запоминаем последнюю нажатую кнопку
+        // Скрываем описание при уходе курсора
+        descriptionText.gameObject.SetActive(false);
     }
 
-    public void OnMouseExit(Button button)
+    public void OnPointerClick(PointerEventData eventData)
     {
-        // Скрываем описание, если мышь покинула кнопку
-        if (!isButtonPressed)
-        {
-            descriptionPanel.SetActive(false);
-        }
+        // Устанавливаем флаг нажатия кнопки
+        isButtonClicked = true;
+        descriptionText.gameObject.SetActive(false); // Скрываем описание при нажатии
+    }
+
+    public void ResetButtonState()
+    {
+        // Метод для сброса состояния кнопки, чтобы описание снова отображалось
+        isButtonClicked = false;
     }
 }
