@@ -184,9 +184,30 @@ public class GridSystem : MonoBehaviour
 
             objectsMatrix[cellCoords] = newBuilding;
 
-            // Update pollution or other game stats
-            WorldStatistic.ChangePollution(_objectDatabase.objectsData[_selectedObjectIndex].PollutionMultiplier); 
-        
+
+            // Õ≈ ”ƒ¿Àﬂ… !!!
+            if (WorldStatistic.HaveMoney(_objectDatabase.objectsData[_selectedObjectIndex].Price) == false)
+            {
+                StopPlacement();
+                Destroy(newObject);
+            }
+
+            WorldStatistic.ChangePollution(_objectDatabase.objectsData[_selectedObjectIndex].PollutionMultiplier);
+            WorldStatistic.ChangeCurrentMoney(_objectDatabase.objectsData[_selectedObjectIndex].Price);
+            if (_selectedObjectIndex == 0)
+            {
+                WorldStatistic.ChangeIncome(-10);
+            }
+            else if (_selectedObjectIndex == 1)
+            {
+                WorldStatistic.ChangeIncome(100);
+            }
+            else if (_selectedObjectIndex == 2)
+            {
+                WorldStatistic.ChangeIncome(-200);
+            }
+            //
+
             StopPlacement();
         }
     }

@@ -1,20 +1,19 @@
-//WorldStatistic.cs
-// РЕФАКТОР ОБЯЗАТЕЛЬНО
-
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 using UnityEngine;
 using System;
 using TMPro;
+using Unity.VisualScripting;
 
 public class WorldStatistic : MonoBehaviour
 {
     [Header("Pollution")]
     [SerializeField] private float startingEcoStatus = 30.0f;
     [SerializeField] private float maxEcoStatus = 100.0f;
+    [SerializeField] private static float currentPollutionMultiplier = 1.0f;
     [SerializeField] private float pollutionUnit = 1.0f;
     [SerializeField] private Slider ecoSlider;
-    private static float currentPollutionMultiplier = 1.0f;
-    
     [Header("Finance")]
     [SerializeField] private int startingMoney = 20000;
     [SerializeField] private int startingIncome = 100;
@@ -24,10 +23,10 @@ public class WorldStatistic : MonoBehaviour
     private static int currentMoney = 0;
 
     private bool? checkWin = null;
-
     private float currentEcoStatus = 0.0f;
-    private float timerForIncome = 0.0f;
 
+    private float timerForIncome = 0.0f;
+    // С GridSystem скопировать в новый проект
     private void Start()
     {
         currentEcoStatus = startingEcoStatus;
@@ -36,7 +35,7 @@ public class WorldStatistic : MonoBehaviour
 
     void FixedUpdate()
     {
-        //WorldStatus();
+        WorldStatus();
         timerForIncome += Time.deltaTime;
         
         // Загрязнение
@@ -61,14 +60,9 @@ public class WorldStatistic : MonoBehaviour
         }
 
         // Заработок
-        //Debug.Log(timerForIncome.ToString() + "/" + (currentIncome + startingIncome).ToString());
         if (timerForIncome >= timeToIncome)
         {
-            if (currentMoney - currentMoney + startingIncome < 0) // хуйня
-                currentMoney = 0; //,
-            else // переделывай
-                currentMoney += currentIncome + startingIncome;
-
+            IncomeMoney();
             timerForIncome = 0.0f;
         }
     }
@@ -76,14 +70,11 @@ public class WorldStatistic : MonoBehaviour
     {
         // Заработок
         moneyText.text = currentMoney.ToString() + "$";
-
-        
     }
     public static void ChangePollution(float multiply)
     {
         currentPollutionMultiplier += multiply;
     }
-
     public static void ChangeIncome(int income)
     {
         currentIncome += income;
@@ -100,6 +91,17 @@ public class WorldStatistic : MonoBehaviour
             result = false;
 
         return result;
+    }
+    private void IncomeMoney()
+    {
+        AddMoney(currentIncome + startingIncome);
+
+        if (currentMoney < 0)
+            currentMoney = 0;
+    }
+    private void AddMoney(int money)
+    {
+        currentMoney += money;
     }
     private void WorldStatus()
     {

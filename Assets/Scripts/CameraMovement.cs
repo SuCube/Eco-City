@@ -1,65 +1,183 @@
+using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
 {
-    [Header("Camera settings")]
-    [SerializeField] private Camera playerCamera;
-    [SerializeField] private Transform cameraPoint; 
-    [SerializeField, Range(0, 100)] private float moveSpeed = 50.0f;
-    [SerializeField, Range(0, 100)] private float rotationSpeed = 30.0f;
-    [SerializeField, Range(0, 100)] private float zoomSpeed = 25.0f;
+    // Написано по видосу https://www.youtube.com/watch?v=rnqF6S7PfFA
+    // Модернезированно и подстроено под проект мною :D
+
+    // Этот код, на сцене объекты (Player и его объекты) и компоненты, код в WorldStatistic, исправления в GridSystem перенести в новый проект (сделано)
+    // Управление:
+    // WASD / Стрелки / ЛКМ = Передвижение камеры (ЛКМ в разработке (и отключено))
+    // Left Shift = Ускоренное передвижение
+    // Q,E / ПКМ = Вращение
+    // R,F / Колёсико мыши = Зум
+    // C = Возвращает вращение и зум в стандартное положение 
+
+    [Header("Movement settings")]
+    [SerializeField] private float normalSpeed = 0.5f;
+    [SerializeField] private float shiftSpeed = 1.0f;
+    [SerializeField] private float movementTime = 5.0f;
+    [Header("Movement limits")]
+    [SerializeField] private float minMovementX = -60.0f;
+    [SerializeField] private float maxMovementX = 60.0f;
+    [SerializeField] private float minMovementZ = -60.0f;
+    [SerializeField] private float maxMovementZ = 60.0f;
+    private float movementSpeed = 0.0f;
+    private Vector3 newPosition;
+
     [Space]
-    /*[Header("Camera Movement Limits")]
-    [SerializeField] private float minX = -100.0f;
-    [SerializeField] private float maxX = 100.0f;
-    [SerializeField] private float minZ = -100.0f;
-    [SerializeField] private float maxZ = 100.0f;*/
     [Space]
-    [Header("Camera Rotation Limits")]
-    [SerializeField] private float minRotationX = 20.0f;
-    [SerializeField] private float maxRotationX = 70.0f;
-    private float verticalAngle = 0.0f;
+
+    [Header("Rotation and zoom settings")]
+    [SerializeField] private float rotationAmount = 0.5f;
+    [SerializeField, Range(0, 1f)] private float zoomAmount = 0.2f;
+    [Header("Zoom limits")]
+    [SerializeField] private float maxZoom = 10.0f;
+    [SerializeField] private float minZoom = 40.0f;
+    private Quaternion newRotation;
+    private float newZoom;
+
+    private Vector3 dragStartPosition;
+    private Vector3 dragCurrentPosition;
+
+    private Vector3 rotateStartPosition;
+    private Vector3 rotateCurrentPosition;
+
+    private float defaultRotationY = 45.0f;
+    private float defaultZoom = 20.0f;
+
+    void Start()
+    {
+        newPosition = transform.position;
+        newRotation = transform.rotation;
+
+        newZoom = Camera.main.orthographicSize;
+    }
 
     void Update()
     {
-        // Вращение камеры вокруг сферы при зажатой ПКМ
-        if (Input.GetMouseButton(1)) // ПКМ
+        HandleMovementInput();
+        HandleMouseInput();
+    }
+
+    private void HandleMouseInput()
+    {
+        /*
+        if (Input.GetMouseButtonDown(0))
         {
-            float rotationX = Input.GetAxis("Mouse X") * rotationSpeed * 10 * Time.deltaTime;
-            float rotationY = Input.GetAxis("Mouse Y") * rotationSpeed * 10 * Time.deltaTime;
+            Plane plane = new Plane(Vector3.up, Vector3.zero);
 
-            verticalAngle -= rotationY;
-            verticalAngle = Mathf.Clamp(verticalAngle, minRotationX, maxRotationX);
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            //transform.RotateAround(cameraPoint.position, Vector3.up, rotationX);
-            //transform.eulerAngles = new Vector3(verticalAngle, transform.eulerAngles.y, 0);
+            float entry;
 
-            transform.RotateAround(cameraPoint.position, Vector3.up, rotationX);
-            transform.RotateAround(cameraPoint.position, transform.right, -rotationY);
+            if(plane.Raycast(ray, out entry))
+            {
+                dragStartPosition = ray.GetPoint(entry);
+            }
         }
 
-        // Перемещение камеры при зажатой ЛКМ
-        if (Input.GetMouseButton(0)) // ЛКМ
+        if (Input.GetMouseButton(0))
         {
-            float moveX = Input.GetAxis("Mouse X") * moveSpeed * 10 * Time.deltaTime;
-            float moveZ = Input.GetAxis("Mouse Y") * moveSpeed * 10 * Time.deltaTime;
+            Plane plane = new Plane(Vector3.up, Vector3.zero);
 
-            //Vector3 forward = transform.forward;
-            //Vector3 right = transform.right;
+            Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
-            //Vector3 move = (forward * -moveZ + right * moveX);
-            //transform.position += move * moveSpeed; // Перемещение камеры
+            float entry;
 
-            Vector3 moveDirection = new Vector3(moveX, 0.0f, moveZ);
-            transform.Translate(moveDirection);
+            if (plane.Raycast(ray, out entry))
+            {
+                dragCurrentPosition = ray.GetPoint(entry);
+
+                newPosition = transform.position + dragStartPosition - dragCurrentPosition;
+            }
+        } */
+
+        if (Input.GetMouseButtonDown(1))
+        {
+            rotateStartPosition = Input.mousePosition;
+        }
+        if (Input.GetMouseButton(1))
+        {
+            rotateCurrentPosition = Input.mousePosition;
+
+            Vector3 differance = rotateStartPosition - rotateCurrentPosition;
+
+            rotateStartPosition = rotateCurrentPosition;
+
+            newRotation *= Quaternion.Euler(Vector3.up * (-differance.x / 5.0f));
         }
 
-        // Зум
-        float scroll = Input.GetAxis("Mouse ScrollWheel");
-        if (scroll != 0 && playerCamera != null)
+        if (Input.mouseScrollDelta.y != 0)
         {
-            playerCamera.fieldOfView -= scroll * zoomSpeed * 2;
-            playerCamera.fieldOfView = Mathf.Clamp(playerCamera.fieldOfView, 15f, 90f); // Ограничение FOV
+            newZoom += Input.mouseScrollDelta.y * zoomAmount * 10.0f;
         }
     }
+
+    private void HandleMovementInput()
+    {
+        if (Input.GetKey(KeyCode.LeftShift))
+        {
+            movementSpeed = shiftSpeed;
+        }
+        else
+        {
+            movementSpeed = normalSpeed;
+        }
+
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow))
+        {
+            newPosition += (transform.forward * movementSpeed);
+        }
+
+        if (Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow))
+        {
+            newPosition += (transform.forward * -movementSpeed);
+        }
+
+        if (Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            newPosition += (transform.right * movementSpeed);
+        }
+
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            newPosition += (transform.right * -movementSpeed);
+        }
+
+        if (Input.GetKey(KeyCode.Q))
+        {
+            newRotation *= Quaternion.Euler(Vector3.up * -rotationAmount);
+        }
+        if (Input.GetKey(KeyCode.E))
+        {
+            newRotation *= Quaternion.Euler(Vector3.up * +rotationAmount);
+        }
+
+        if (Input.GetKey(KeyCode.R))
+        {
+            newZoom -= zoomAmount;
+        }
+        if (Input.GetKey(KeyCode.F))
+        {
+            newZoom += zoomAmount;
+        }
+
+        if (Input.GetKey(KeyCode.C))
+        {
+            newRotation = Quaternion.Euler(Vector3.up * defaultRotationY);
+            newZoom = defaultZoom;
+        }
+
+        newPosition.x = Mathf.Clamp(newPosition.x, minMovementX, maxMovementX);
+        newPosition.z = Mathf.Clamp(newPosition.z, minMovementZ, maxMovementZ);
+
+        newZoom = Mathf.Clamp(newZoom, maxZoom, minZoom);
+
+        transform.position = Vector3.Lerp(transform.position, newPosition, Time.deltaTime * movementTime);
+        transform.rotation = Quaternion.Lerp(transform.rotation, newRotation, Time.deltaTime * movementTime);
+        Camera.main.orthographicSize = Mathf.Lerp(Camera.main.orthographicSize, newZoom, Time.deltaTime * movementTime);
+    } 
 }
