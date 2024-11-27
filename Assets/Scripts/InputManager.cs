@@ -1,3 +1,6 @@
+// InputManager.cs
+// УБРАТЬ ИВЕНТЫ (CellMenu спамит несколько раз, ивенты накапливаются)
+
 using System;
 using UnityEngine;
 using UnityEngine.EventSystems;

@@ -1,7 +1,6 @@
 // GridSystem.cs
 // УБРАТЬ ИВЕНТЫ (CellMenu спамит несколько раз, ивенты накапливаются)
 
-
 using TMPro;
 using UnityEngine;
 
@@ -14,7 +13,7 @@ public class GridSystem : MonoBehaviour
     [SerializeField] private GameObject _cellMenu;
 
     [SerializeField] private ObjectDatabaseSO _objectDatabase;
-    private int _selectedObjectIndex = -1; //Если -1, то стройка не идёт - объект не выбран
+    private int _selectedObjectIndex = -1; // Если -1, то стройка не идёт - объект не выбран
 
     [SerializeField] private GameObject _gridVisualization;
     [SerializeField] private Transform _objectsParent;
@@ -64,7 +63,7 @@ public class GridSystem : MonoBehaviour
 
     void Start()
     {
-        objectsMatrix = new GridMatrix(new Vector3Int(10,1,10), new Vector3Int(5,0,5));
+        objectsMatrix = new GridMatrix(new Vector3Int(10, 1, 10), new Vector3Int(5, 0, 5));
         _isCellMenuShown = false;
         _canSelectorMove = true;
         _inputManager.OnClicked += ShowCellMenu;
@@ -118,15 +117,11 @@ public class GridSystem : MonoBehaviour
     private void ShowCellMenu()
     {
         /* Надо добавить возможность:    
-         * Удалять    
-         * Перемещать    
-         * Улучшать    
-         * ...Чистить? 
-         */ 
-
-        /* 
-         *Баг: дабл-клик по кнопке стройки вызывает ошибку при нажатии по траве до нажатия пкм
-        */
+         * Удалять DONE  
+         * Перемещать   
+         * Улучшать 
+         * Чистить от грязи
+         */
 
         if (_inputManager.IsPointerOverUI()) return;
 
@@ -153,7 +148,7 @@ public class GridSystem : MonoBehaviour
         {
             cellobjText.text = "Empty";
         }
-        //Поле не пустое, показать возможность разрушить объект
+        // Поле не пустое, показать возможность разрушить объект
         else
         {
             cellobjText.text = _objectDatabase.objectsData[objectsMatrix[_selectedCellPosition].Id].Name;
@@ -180,7 +175,6 @@ public class GridSystem : MonoBehaviour
         if (_inputManager.IsPointerOverUI()) return;
 
         Vector3Int cellCoords = _grid.WorldToCell(_indicatorPosition);
-        //if (objectsMatrix[cellCoords] == -1)
         if (_inputManager.GetSelectedMapPosition(out _indicatorPosition) && objectsMatrix[cellCoords] == null)
         {
             GameObject newObject = Instantiate(_objectDatabase.objectsData[_selectedObjectIndex].Prefab);
@@ -201,10 +195,7 @@ public class GridSystem : MonoBehaviour
                 Debug.LogError("The prefab does not have a Building component attached.");
             }
 
-            objectsMatrix[cellCoords] = newBuilding;
-
-
-            // �� ������ !!!
+            // НЕ УДАЛЯЙ !!!
             if (WorldStatistic.HaveMoney(_objectDatabase.objectsData[_selectedObjectIndex].Price) == false)
             {
                 StopPlacement();
@@ -233,19 +224,19 @@ public class GridSystem : MonoBehaviour
 
     public void DestroyStructure()
     {
-        //Отрицательные коорды работают странно. Удаление цепляет объект не везде
+        // Отрицательные координаты работают странно. Удаление цепляет объект не везде
 
         _selectedCellPosition = _grid.WorldToCell(_indicatorPosition);
-        Debug.Log("Удаляем объект " + _selectedCellPosition + objectsMatrix[_selectedCellPosition].Id); //Null Reference Exception caught
+        Debug.Log("Удаляем объект " + _selectedCellPosition + objectsMatrix[_selectedCellPosition].Id); // Null Reference Exception caught
         if (objectsMatrix[_selectedCellPosition] != null)
         {
-            GameObject obj = objectsMatrix[_selectedCellPosition].gameObject; //NO PREFAB
+            GameObject obj = objectsMatrix[_selectedCellPosition].gameObject; // NO PREFAB
             Destroy(obj);
             objectsMatrix[_selectedCellPosition] = null;
             Debug.Log(obj.ToString());
             Debug.Log(_selectedObjectIndex);
             // Update pollution or other game stats
-            WorldStatistic.ChangePollution(_objectDatabase.objectsData[_selectedObjectIndex].PollutionMultiplier * -1.0f); //same
+            WorldStatistic.ChangePollution(_objectDatabase.objectsData[_selectedObjectIndex].PollutionMultiplier * -1.0f); // same
         }
         HideCellMenu();
     }

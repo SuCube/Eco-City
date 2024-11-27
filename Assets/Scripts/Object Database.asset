@@ -37,15 +37,39 @@ MonoBehaviour:
     <Price>k__BackingField: 200
     <PollutionMultiplier>k__BackingField: -3
     <TimeToBuildInSec>k__BackingField: 60
-  - <Name>k__BackingField: Cross Road
+  - <Name>k__BackingField: Solar Panels
     <ID>k__BackingField: 4
-    <Prefab>k__BackingField: {fileID: 4089753280810521488, guid: 3a3114d0d897b604e9ff5fdaa8442fb6, type: 3}
+    <Prefab>k__BackingField: {fileID: 2766604919056977937, guid: 0c03727c320e73249a155353a0421c4e, type: 3}
     <Price>k__BackingField: 200
-    <PollutionMultiplier>k__BackingField: -3
+    <PollutionMultiplier>k__BackingField: 1
     <TimeToBuildInSec>k__BackingField: 60
-  - <Name>k__BackingField: Turn Road
+  - <Name>k__BackingField: Thermal Station
     <ID>k__BackingField: 5
-    <Prefab>k__BackingField: {fileID: 7389227313582241461, guid: ca612e9bf46d10243b911e39e65d5892, type: 3}
+    <Prefab>k__BackingField: {fileID: 1512860058333344366, guid: 1991c625270e3da4e9e6b9e5dc9b05ef, type: 3}
     <Price>k__BackingField: 200
-    <PollutionMultiplier>k__BackingField: -3
+    <PollutionMultiplier>k__BackingField: 1
+    <TimeToBuildInSec>k__BackingField: 60
+  - <Name>k__BackingField: Windmills
+    <ID>k__BackingField: 6
+    <Prefab>k__BackingField: {fileID: 3508175201388856154, guid: 36009280068412c4aba816dd2bcc81ef, type: 3}
+    <Price>k__BackingField: 200
+    <PollutionMultiplier>k__BackingField: 1
+    <TimeToBuildInSec>k__BackingField: 60
+  - <Name>k__BackingField: Factory
+    <ID>k__BackingField: 7
+    <Prefab>k__BackingField: {fileID: 8393673349778488239, guid: 663dcfbb03b0fde44bb85a5bd3ee8c80, type: 3}
+    <Price>k__BackingField: 200
+    <PollutionMultiplier>k__BackingField: 1
+    <TimeToBuildInSec>k__BackingField: 60
+  - <Name>k__BackingField: Hotel
+    <ID>k__BackingField: 8
+    <Prefab>k__BackingField: {fileID: 2813324565409229199, guid: 5875a579aec0ef94498b41ee5bbc1e28, type: 3}
+    <Price>k__BackingField: 200
+    <PollutionMultiplier>k__BackingField: 1
+    <TimeToBuildInSec>k__BackingField: 60
+  - <Name>k__BackingField: Autosalon
+    <ID>k__BackingField: 9
+    <Prefab>k__BackingField: {fileID: 919132149155446097, guid: 546bc8d6af4399840a8c626083fe23f8, type: 3}
+    <Price>k__BackingField: 200
+    <PollutionMultiplier>k__BackingField: 1
     <TimeToBuildInSec>k__BackingField: 60
