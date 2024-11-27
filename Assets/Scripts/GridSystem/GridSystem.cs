@@ -1,6 +1,7 @@
-//GridSystem.cs
-//Тут баг где-то в строительстве и в cellMenu, надо фиксить
-//
+// GridSystem.cs
+// РЈР‘Р РђРўР¬ РР’Р•РќРўР« (CellMenu СЃРїР°РјРёС‚ РЅРµСЃРєРѕР»СЊРєРѕ СЂР°Р·, РёРІРµРЅС‚С‹ РЅР°РєР°РїР»РёРІР°СЋС‚СЃСЏ)
+
+
 using TMPro;
 using UnityEngine;
 
@@ -13,12 +14,16 @@ public class GridSystem : MonoBehaviour
     [SerializeField] private GameObject _cellMenu;
 
     [SerializeField] private ObjectDatabaseSO _objectDatabase;
-    private int _selectedObjectIndex = -1;
+    private int _selectedObjectIndex = -1; //Р•СЃР»Рё -1, С‚Рѕ СЃС‚СЂРѕР№РєР° РЅРµ РёРґС‘С‚ - РѕР±СЉРµРєС‚ РЅРµ РІС‹Р±СЂР°РЅ
 
     [SerializeField] private GameObject _gridVisualization;
     [SerializeField] private Transform _objectsParent;
 
     private Vector3 _indicatorPosition;
+    private Vector3Int _selectedCellPosition;
+    private bool _isCellMenuShown;
+    private bool _canSelectorMove;
+
     GridMatrix objectsMatrix;
 
     private class GridMatrix
@@ -59,14 +64,17 @@ public class GridSystem : MonoBehaviour
 
     void Start()
     {
-        StopPlacement();
         objectsMatrix = new GridMatrix(new Vector3Int(10,1,10), new Vector3Int(5,0,5));
+        _isCellMenuShown = false;
+        _canSelectorMove = true;
+        _inputManager.OnClicked += ShowCellMenu;
     }
 
     public void StartPlacement(int ID)
     {
-
-        //StopPlacement();
+        if (ID == _selectedObjectIndex) return;
+        if (_selectedObjectIndex != -1) StopPlacement();
+        
         _selectedObjectIndex = _objectDatabase.objectsData.FindIndex(data => data.ID == ID);
         if (_selectedObjectIndex < 0)
         {
@@ -79,19 +87,22 @@ public class GridSystem : MonoBehaviour
         _inputManager.OnExit += StopPlacement;
         _inputManager.OnClicked -= ShowCellMenu;
 
-        Debug.Log("Начало постройки объекта " + _objectDatabase.objectsData[_selectedObjectIndex].Name);
+        Debug.Log("РќР°С‡Р°Р»Рѕ РїРѕСЃС‚СЂРѕР№РєРё РѕР±СЉРµРєС‚Р° " + _objectDatabase.objectsData[_selectedObjectIndex].Name);
     }
 
     void Update()
     {
         //if (_selectedObjectIndex < 0) return;
-        if (_inputManager.GetSelectedMapPosition(out _indicatorPosition))
+        if (_canSelectorMove)
         {
-            _cellIndicator.transform.position = _grid.CellToWorld(_grid.WorldToCell(_indicatorPosition));
-            _cellIndicator.SetActive(true);
+            if (_inputManager.GetSelectedMapPosition(out _indicatorPosition))
+            {
+                _cellIndicator.transform.position = _grid.CellToWorld(_grid.WorldToCell(_indicatorPosition));
+                _cellIndicator.SetActive(true);
+            }
+            else
+                _cellIndicator.SetActive(false);
         }
-        else
-            _cellIndicator.SetActive(false);
     }
 
     public void StopPlacement()
@@ -106,19 +117,20 @@ public class GridSystem : MonoBehaviour
 
     private void ShowCellMenu()
     {
-        /*
-         Надо добавить возможность:
-            * Удалять
-            * Перемещать
-            * Улучшать
-            * ...Чистить?
-         */
+        /* РќР°РґРѕ РґРѕР±Р°РІРёС‚СЊ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ:    
+         * РЈРґР°Р»СЏС‚СЊ    
+         * РџРµСЂРµРјРµС‰Р°С‚СЊ    
+         * РЈР»СѓС‡С€Р°С‚СЊ    
+         * ...Р§РёСЃС‚РёС‚СЊ? 
+         */ 
 
-        /*Баг: дабл-клик по кнопке стройки вызывает ошибку при нажатии по траве до нажатия пкм*/
+        /* 
+         *Р‘Р°Рі: РґР°Р±Р»-РєР»РёРє РїРѕ РєРЅРѕРїРєРµ СЃС‚СЂРѕР№РєРё РІС‹Р·С‹РІР°РµС‚ РѕС€РёР±РєСѓ РїСЂРё РЅР°Р¶Р°С‚РёРё РїРѕ С‚СЂР°РІРµ РґРѕ РЅР°Р¶Р°С‚РёСЏ РїРєРј
+        */
 
         if (_inputManager.IsPointerOverUI()) return;
 
-        Vector3Int cellCoords = _grid.WorldToCell(_indicatorPosition);
+        _selectedCellPosition = _grid.WorldToCell(_indicatorPosition);
 
         Vector3 screenPosition = Camera.main.WorldToScreenPoint(_cellIndicator.transform.position + new Vector3(3f, 3f));
         Debug.Log(screenPosition.ToString());
@@ -129,20 +141,24 @@ public class GridSystem : MonoBehaviour
         _inputManager.OnClicked += HideCellMenu;
         _inputManager.OnClicked -= ShowCellMenu;
 
+        _isCellMenuShown = true;
+        _canSelectorMove = false;
+
         //Debug.Log(cellCoords.ToString() + (objectsMatrix[cellCoords]));
 
-        // Если поле пустое, показать меню постройки
+        // Р•СЃР»Рё РїРѕР»Рµ РїСѓСЃС‚РѕРµ, РїРѕРєР°Р·Р°С‚СЊ РјРµРЅСЋ РїРѕСЃС‚СЂРѕР№РєРё.
         TMP_Text cellobjText = _cellMenu.GetComponentInChildren<TMP_Text>();
 
-        if (objectsMatrix[cellCoords] == null)
+        if (objectsMatrix[_selectedCellPosition] == null)
         {
             cellobjText.text = "Empty";
         }
-        //Поле не пустое, показать возможность разрушить объект
+        //РџРѕР»Рµ РЅРµ РїСѓСЃС‚РѕРµ, РїРѕРєР°Р·Р°С‚СЊ РІРѕР·РјРѕР¶РЅРѕСЃС‚СЊ СЂР°Р·СЂСѓС€РёС‚СЊ РѕР±СЉРµРєС‚
         else
         {
-            cellobjText.text = _objectDatabase.objectsData[objectsMatrix[cellCoords].Id].Name;
-            Debug.Log(objectsMatrix[cellCoords].Id);
+            cellobjText.text = _objectDatabase.objectsData[objectsMatrix[_selectedCellPosition].Id].Name;
+            _selectedObjectIndex = objectsMatrix[_selectedCellPosition].Id;
+            //Debug.Log(objectsMatrix[_selectedCellPosition].Id);
         }
     }
 
@@ -154,6 +170,9 @@ public class GridSystem : MonoBehaviour
         _inputManager.OnExit -= HideCellMenu;
         _inputManager.OnClicked -= HideCellMenu;
         _inputManager.OnClicked += ShowCellMenu;
+
+        _isCellMenuShown = false;
+        _canSelectorMove = true;
     }
 
     private void PlaceStructure()
@@ -212,4 +231,22 @@ public class GridSystem : MonoBehaviour
         }
     }
 
+    public void DestroyStructure()
+    {
+        //РћС‚СЂРёС†Р°С‚РµР»СЊРЅС‹Рµ РєРѕРѕСЂРґС‹ СЂР°Р±РѕС‚Р°СЋС‚ СЃС‚СЂР°РЅРЅРѕ. РЈРґР°Р»РµРЅРёРµ С†РµРїР»СЏРµС‚ РѕР±СЉРµРєС‚ РЅРµ РІРµР·РґРµ
+
+        _selectedCellPosition = _grid.WorldToCell(_indicatorPosition);
+        Debug.Log("РЈРґР°Р»СЏРµРј РѕР±СЉРµРєС‚ " + _selectedCellPosition + objectsMatrix[_selectedCellPosition].Id); //Null Reference Exception caught
+        if (objectsMatrix[_selectedCellPosition] != null)
+        {
+            GameObject obj = objectsMatrix[_selectedCellPosition].gameObject; //NO PREFAB
+            Destroy(obj);
+            objectsMatrix[_selectedCellPosition] = null;
+            Debug.Log(obj.ToString());
+            Debug.Log(_selectedObjectIndex);
+            // Update pollution or other game stats
+            WorldStatistic.ChangePollution(_objectDatabase.objectsData[_selectedObjectIndex].PollutionMultiplier * -1.0f); //same
+        }
+        HideCellMenu();
+    }
 }
