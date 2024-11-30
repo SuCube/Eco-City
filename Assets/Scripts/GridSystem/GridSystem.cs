@@ -1,5 +1,6 @@
 // GridSystem.cs
-// УБРАТЬ ИВЕНТЫ (CellMenu спамит несколько раз, ивенты накапливаются)
+// CellMenu спамит несколько раз, ивенты накапливаются
+// CellMenu сделать отдельным классом
 
 using TMPro;
 using UnityEngine;
@@ -20,8 +21,8 @@ public class GridSystem : MonoBehaviour
 
     private Vector3 _indicatorPosition;
     private Vector3Int _selectedCellPosition;
-    private bool _isCellMenuShown;
-    private bool _canSelectorMove;
+    public bool IsCellMenuShown { get; private set; }
+    public bool CanSelectorMove { get; private set; }
 
     GridMatrix objectsMatrix;
 
@@ -64,8 +65,8 @@ public class GridSystem : MonoBehaviour
     void Start()
     {
         objectsMatrix = new GridMatrix(new Vector3Int(10, 1, 10), new Vector3Int(5, 0, 5));
-        _isCellMenuShown = false;
-        _canSelectorMove = true;
+        IsCellMenuShown = false;
+        CanSelectorMove = true;
         _inputManager.OnClicked += ShowCellMenu;
     }
 
@@ -92,7 +93,7 @@ public class GridSystem : MonoBehaviour
     void Update()
     {
         //if (_selectedObjectIndex < 0) return;
-        if (_canSelectorMove)
+        if (CanSelectorMove)
         {
             if (_inputManager.GetSelectedMapPosition(out _indicatorPosition))
             {
@@ -121,23 +122,22 @@ public class GridSystem : MonoBehaviour
          * Перемещать   
          * Улучшать 
          * Чистить от грязи
+         * Просмотреть инфу о здании
          */
 
         if (_inputManager.IsPointerOverUI()) return;
 
         _selectedCellPosition = _grid.WorldToCell(_indicatorPosition);
 
-        Vector3 screenPosition = Camera.main.WorldToScreenPoint(_cellIndicator.transform.position + new Vector3(3f, 3f));
-        Debug.Log(screenPosition.ToString());
-        _cellMenu.transform.position = screenPosition;
+        UpdateCellMenuPosition();
         _cellMenu.gameObject.SetActive(true);
 
         _inputManager.OnExit += HideCellMenu;
         _inputManager.OnClicked += HideCellMenu;
         _inputManager.OnClicked -= ShowCellMenu;
 
-        _isCellMenuShown = true;
-        _canSelectorMove = false;
+        IsCellMenuShown = true;
+        CanSelectorMove = false;
 
         //Debug.Log(cellCoords.ToString() + (objectsMatrix[cellCoords]));
 
@@ -159,15 +159,23 @@ public class GridSystem : MonoBehaviour
 
     private void HideCellMenu()
     {
-        if (_inputManager.IsPointerOverUI()) return;
+        //if (_inputManager.IsPointerOverUI()) return;
 
         _cellMenu.gameObject.SetActive(false);
         _inputManager.OnExit -= HideCellMenu;
         _inputManager.OnClicked -= HideCellMenu;
         _inputManager.OnClicked += ShowCellMenu;
 
-        _isCellMenuShown = false;
-        _canSelectorMove = true;
+        IsCellMenuShown = false;
+        CanSelectorMove = true;
+    }
+
+    public void UpdateCellMenuPosition()
+    {
+        if (!IsCellMenuShown) return;
+
+        Vector3 screenPosition = Camera.main.WorldToScreenPoint(_cellIndicator.transform.position + new Vector3(5,0,5));
+        _cellMenu.transform.position = screenPosition;
     }
 
     private void PlaceStructure()

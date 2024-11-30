@@ -17,6 +17,8 @@ public class InputManager : MonoBehaviour
 
     private void Update()
     {
+        if (IsPointerOverUI()) return;
+
         if (Input.GetMouseButtonDown(0))
         {
             OnClicked?.Invoke();

@@ -1,5 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
+// CellMenu.cs
+// заменить обращение с GridSystem на CellMenu 
+
 using UnityEngine;
 
 public class CameraMovement : MonoBehaviour
@@ -14,6 +15,8 @@ public class CameraMovement : MonoBehaviour
     // Q,E / ПКМ = Вращение
     // R,F / Колёсико мыши = Зум
     // C = Возвращает вращение и зум в стандартное положение 
+    public GridSystem gridSystem;
+    [Space]
 
     [Header("Movement settings")]
     [SerializeField] private float normalSpeed = 0.5f;
@@ -60,6 +63,7 @@ public class CameraMovement : MonoBehaviour
     {
         HandleMovementInput();
         HandleMouseInput();
+        gridSystem.UpdateCellMenuPosition();
     }
 
     private void HandleMouseInput()

@@ -13,17 +13,26 @@ public class Building : MonoBehaviour
         IsUnderDestruction,
         IsDestructed
     }
+    public enum Rotation
+    {
+        North,
+        East,
+        South,
+        West
+    }
 
     public int Id { get; set; }
     //public int NumberOfPeople { get; set; }
     //public float Health { get; set; } //ћб не пригодитс€
     public float ConstructionProgress { get; set; }
     public Status BuildingStatus { get; set; }
+    public Rotation rotation { get; set; }
     public int MaxUpgrades { get; set; }
 
     public Building(int Id)
     {
         this.Id = Id;
+        this.rotation = Rotation.North;
     }
 
 
